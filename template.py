@@ -4,7 +4,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-project_name = "Credit_Card_DefaultPred"
+project_name="CreditCardDefaultPred"
 
 list_of_files = [
     f"src/{project_name}/__init__.py",
