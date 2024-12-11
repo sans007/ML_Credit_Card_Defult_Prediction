@@ -9,6 +9,9 @@ from sklearn.model_selection import train_test_split
 
 from dataclasses import dataclass
 
+from src.CreditCardDefaultPred.components.data_transformation import DataTransformation
+from src.CreditCardDefaultPred.components.data_transformation import DataTransformationConfig
+
 
 @dataclass
 class DataIngestionConfig:
@@ -24,7 +27,7 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         try:
             ##reading the sql data
-            df=read_sql_data()
+            df=pd.read_csv(os.path.join('Notebook/Data','raw.csv'))
             logging.info("Reading completed from mysql database")
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
