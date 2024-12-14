@@ -8,4 +8,8 @@ seaborn
 catboost
 xgboost
 imblearn
+mlflow
+dagshub
+Flask
+gunicorn
 #-e .
