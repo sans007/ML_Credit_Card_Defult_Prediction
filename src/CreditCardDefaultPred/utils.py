@@ -71,6 +71,8 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, params):
             dict: A dictionary containing model names and their test accuracy scores.
         """
         report = {}
+        best_params = {}
+
         for model_name, model in models.items():
             print(f"Training {model_name}...")
 
@@ -90,7 +92,7 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, params):
 
             # Use the best model
             best_model = rs.best_estimator_
-            best_model.fit(X_train, y_train)
+            best_params[model_name] = rs.best_params_
 
             # Predictions
             y_test_pred = best_model.predict(X_test)
@@ -101,7 +103,7 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, params):
 
             print(f"{model_name} Test Accuracy: {test_accuracy:.4f}")
 
-        return report
+        return report,best_params
     
     except Exception as e:
         raise CustomException(e,sys)

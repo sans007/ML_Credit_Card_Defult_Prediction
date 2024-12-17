@@ -43,13 +43,15 @@ class ModelTrainer:
     
        try:
             logging.info("Split training and test input data")
-            X_train,y_train,X_test,y_test = (
-                train_array[:,:-1],
-                train_array[:,-1],
-                test_array[:,:-1],
-                test_array[:,-1]
-            )
-        
+            # X_train,y_train,X_test,y_test = (
+            #     train_array[:,:-1],
+            #     train_array[:,-1],
+            #     test_array[:,:-1],
+            #     test_array[:,-1]
+            # )
+            
+            X_train, y_train = train_array[:, :-1], train_array[:, -1]
+            X_test, y_test = test_array[:, :-1], test_array[:, -1]
             # Define models
             models = {
                 "Random Forest": RandomForestClassifier(),
@@ -88,21 +90,22 @@ class ModelTrainer:
             }
 
             # Evaluate models
-            model_report = evaluate_models(X_train, y_train, X_test, y_test, models, params)
+            model_report, best_params = evaluate_models(X_train, y_train, X_test, y_test, models, params)
 
             # Get the best model
             best_model_name = max(model_report, key=model_report.get)  # Get the key with the highest value
             best_model_score = model_report[best_model_name]
+            best_model_params = best_params[best_model_name]
             best_model = models[best_model_name]
 
             print(f"\nBest Model: {best_model_name} with Test Accuracy: {best_model_score:.4f}")
-
-            # Fetch best parameters for the selected model
-            best_param = params.get(best_model_name, "No hyperparameters available for this model.")
-            print(f"Best Parameters for {best_model_name}: {best_param}")
+            print(f"Best Parameters for {best_model_name}: {best_model_params}")
 
             
+
             
+            # Train the best model on the full training set
+            best_model.set_params(**best_model_params)
             best_model.fit(X_train, y_train)
 
             
@@ -120,7 +123,7 @@ class ModelTrainer:
                 # Evaluate the model's performance
                 Accuracy_score,Precision_score,Recall_score,F1_score = self.eval_metrics(y_test, predicted_qualities)
 
-                mlflow.log_params(best_param)
+                mlflow.log_params(best_model_params)
 
                 mlflow.log_metric("Accuracy", Accuracy_score)
                 mlflow.log_metric("Precision", Precision_score)
